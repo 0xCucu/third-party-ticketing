@@ -1,0 +1,17 @@
+{
+  "name": "muskid/third-party-ticketing",
+  "type": "library",
+  "description": "Create deep copies (clones) of your objects",
+  "keywords": ["clone", "copy", "duplicate", "object", "object graph"],
+  "license": "MIT",
+
+  "autoload": {
+    "psr-4": {
+      "Muskid\\": "src/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^6.3",
+    "php": "^5.6 || ^7.0"
+  }
+}
