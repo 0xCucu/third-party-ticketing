@@ -9,9 +9,9 @@
     "psr-4": {
       "Muskid\\": "src/"
     },
-    "files": {
+    "files": [
       "src/helpers.php"
-    }
+    ]
   },
   "require": {
     "guzzlehttp/guzzle": "^6.3",
