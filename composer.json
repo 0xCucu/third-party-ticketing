@@ -4,8 +4,7 @@
   "description": "Create deep copies (clones) of your objects",
   "keywords": ["clone", "copy", "duplicate", "object", "object graph"],
   "license": "MIT",
-
-  "autoload": {
+   "autoload": {
     "psr-4": {
       "Muskid\\": "src/"
     }
