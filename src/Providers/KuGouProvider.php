@@ -31,10 +31,12 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
         $sign = $this->buildSignature($requestData);
         $requestData['appid'] = $appid;
         $requestData['token'] = $sign;
-        dd($requestData);
         $response = $this->getHttpClient()->post($this->baseUrl . '/api/v1/perform/open_add', [
             "form_params" => $requestData
         ]);
+        if ($response->getStatusCode() != 200) {
+            return false;
+        }
         return $response->getBody()->getContents();
     }
 
@@ -70,7 +72,7 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
             }
             $string_parma .= $key . $value;
         }
-        return md5($appid.md5($string_parma).$secretkey);
+        return md5($appid . md5($string_parma) . $secretkey);
     }
 
 
