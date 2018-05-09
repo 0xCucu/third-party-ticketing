@@ -15,8 +15,7 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
         $base_url = config('app.base_url');
         return array_urlencode([
             'sourceid' => $model->id,
-            'item_name' => $performances->title,
-            'desc' => $performances->description,
+            'item_name' => mb_substr($performances->title, 0, 20, 'utf-8'),
             'cover' => config('app.resource_url') . trim($performances->main_picture_url, "/"),
             'province' => $model->province,
             'city' => $model->city,
@@ -27,10 +26,10 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             'end_time' => $model->end_date,
             'performer' => $model->performers,
             'status' => $this->status($model),
-            'prices' => json_encode($this->prices($model->ticket), JSON_UNESCAPED_UNICODE),
+            'prices' => json_encode(array_urlencode($this->prices($model->ticket)), JSON_UNESCAPED_UNICODE),
             'ticket_url' => $base_url . 'new/station/' . $model->id,
             'detail_url' => $base_url . 'new/station/' . $model->id,
-        ]);
+        ],'prices');
     }
 
     public function prices($data)
