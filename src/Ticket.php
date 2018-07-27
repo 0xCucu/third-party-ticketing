@@ -2,7 +2,6 @@
 
 namespace Muskid;
 
-use Muskid\Providers\KuGouProvider;
 use Illuminate\Support\Facades\Queue;
 use Muskid\Job\CreateTicketJob;
 use Muskid\Providers\ProviderInterface;
@@ -151,6 +150,9 @@ class Ticket
     protected function createTicket($args)
     {
         $data = $this->getDataByDataBuilder($args);
+        if (!$data) {
+            return false;
+        }
         $providerInstance = $this->getProvider();
         return $this->create($providerInstance, $data);
     }

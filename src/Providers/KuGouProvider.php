@@ -7,7 +7,7 @@ use Muskid\Providers\ProviderInterface;
 
 class KuGouProvider extends AbstractProvider implements ProviderInterface
 {
-    protected $baseUrl = 'http://test-tools.mobile.kugou.com';
+    protected $baseUrl = 'http://tools.mobile.kugou.com';
 
     protected $appId = '1002';
 
