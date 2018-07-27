@@ -55,11 +55,15 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             if ($ticket->sell_total > 0 && $ticket->sell_total <= $ticket->selled_total) {
                 $ticketStatus = 0; // 0代表已售罄
             }
-            $res[] = [
-                'status' => $ticketStatus,
-                'price' => $ticket->presell_price,
-                'desc' => $ticket->remark,
-            ];
+            //只推送大于0的票品
+            if ($ticket->presell_price > 0) {
+                $res[] = [
+                    'status' => $ticketStatus,
+                    'price' => $ticket->presell_price,
+                    'desc' => $ticket->remark,
+                ];
+            }
+
         }
         return $res;
     }
