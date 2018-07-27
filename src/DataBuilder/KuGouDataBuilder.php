@@ -2,8 +2,9 @@
 
 namespace Muskid\DataBuilder;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Performances;
 use App\Models\PerformancesStation;
+use Illuminate\Database\Eloquent\Model;
 
 class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
 {
@@ -13,6 +14,20 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
         $performances = optional($model->performances);
         $liveHouse = optional($model->liveHouse);
         $base_url = config('app.base_url');
+        if (!isset($model->performances)) {
+            throw new \Exception('推送酷狗票务失败 没有找到 场次【' . $model->id . '】对应演出信息或 演出已经结束不进行推送');
+            return false;
+        }
+        if (!isset($model->ticket)) {
+            throw new \Exception('推送酷狗票务失败没有找到 场次【' . $model->id . '】对应票品或 演出已经结束不进行推送');
+            return false;
+
+        }
+        if ($model->ticket->isEmpty()) {
+            throw new \Exception('推送酷狗票务失败 没有找到 场次【' . $model->id . '】对应票品或 演出已经结束不进行推送');
+            return false;
+
+        }
         return array_urlencode([
             'sourceid' => $model->id,
             'item_name' => mb_substr($performances->title, 0, 20, 'utf-8'),
@@ -29,7 +44,7 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             'prices' => json_encode(array_urlencode($this->prices($model->ticket)), JSON_UNESCAPED_UNICODE),
             'ticket_url' => $base_url . 'new/station/' . $model->id,
             'detail_url' => $base_url . 'new/station/' . $model->id,
-        ],'prices');
+        ], 'prices');
     }
 
     public function prices($data)
@@ -43,7 +58,7 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             $res[] = [
                 'status' => $ticketStatus,
                 'price' => $ticket->presell_price,
-                'desc' => $ticket->remark
+                'desc' => $ticket->remark,
             ];
         }
         return $res;
@@ -58,8 +73,8 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             case 2:
                 return 1;
                 break;
-            case 3 :
-                return 2;
+            case 3:
+                return 3;
                 break;
             case 4:
                 return 3;
@@ -70,16 +85,16 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
         }
     }
 
-
-    public function build($p_id, $ps_id)
+    public function build($p_id, $ps_id = '')
     {
+
         $res = PerformancesStation::has('performances')->with(
             [
                 'performances' => function ($query) use ($p_id) {
                     $query->whereId($p_id);
                 },
                 'liveHouse',
-                'ticket'
+                'ticket',
             ]
         )->effectivePerformancesStation()
             ->whereId($ps_id)
@@ -87,6 +102,9 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             ->reject(function ($item) {
                 return empty($item['performances']);
             });
+        if ($res->isEmpty()) {
+            throw new \Exception('推送酷狗票务失败 没有找到 场次【' . $ps_id . '】对应演出信息 或 演出已经结束不进行推送');
+        }
         return $res;
     }
 }
