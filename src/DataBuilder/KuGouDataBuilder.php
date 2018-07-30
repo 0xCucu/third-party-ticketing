@@ -30,7 +30,7 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
         }
         return array_urlencode([
             'sourceid' => $model->id,
-            'item_name' => mb_substr($performances->title, 0, 20, 'utf-8'),
+            'item_name' => mb_substr(html_entity_decode($performances->title), 0, 20, 'utf-8'),
             'cover' => config('app.resource_url') . trim($performances->main_picture_url, "/"),
             'province' => $model->province,
             'city' => $model->city,
@@ -42,8 +42,8 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
             'performer' => $model->performers,
             'status' => $this->status($model),
             'prices' => json_encode(array_urlencode($this->prices($model->ticket)), JSON_UNESCAPED_UNICODE),
-            'ticket_url' => $base_url . 'new/station/' . $model->id,
-            'detail_url' => $base_url . 'new/station/' . $model->id,
+            'ticket_url' => $base_url . 'new/station/' . $model->id.'?from=kugou',
+            'detail_url' => $base_url . 'new/station/' . $model->id.'?from=kugou',
         ], 'prices');
     }
 
