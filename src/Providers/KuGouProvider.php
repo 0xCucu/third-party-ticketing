@@ -11,7 +11,7 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
 
     protected $appId = '1002';
 
-    protected $secretkey = 'khdy#hsb^hs10';
+    protected $secretkey = 'j!dn7f9#w2a^5hm';
 
     /**
      * Notes:   处理
