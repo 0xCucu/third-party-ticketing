@@ -2,7 +2,6 @@
 
 namespace Muskid\Providers;
 
-use App\Models\Performances;
 use Muskid\Providers\ProviderInterface;
 
 class KuGouProvider extends AbstractProvider implements ProviderInterface
@@ -12,7 +11,7 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
     protected $appId = '1002';
 
     protected $secretkey = 'j!dn7f9#w2a^5hm';
-
+    //protected $secretkey ='khdy#hsb^hs10';
     /**
      * Notes:   处理
      * Author:  Cucumber
@@ -32,14 +31,13 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
         $requestData['appid'] = $appid;
         $requestData['token'] = $sign;
         $response = $this->getHttpClient()->post($this->baseUrl . '/api/v1/perform/open_add', [
-            "form_params" => $requestData
+            "form_params" => $requestData,
         ]);
         if ($response->getStatusCode() != 200) {
             return false;
         }
         return $response->getBody()->getContents();
     }
-
 
     public function setAppId($appid)
     {
@@ -74,6 +72,5 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
         }
         return md5($appid . md5($string_parma) . $secretkey);
     }
-
 
 }

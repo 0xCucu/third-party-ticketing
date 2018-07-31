@@ -2,7 +2,6 @@
 
 namespace Muskid;
 
-use Illuminate\Support\Facades\Queue;
 use Muskid\Job\CreateTicketJob;
 use Muskid\Providers\ProviderInterface;
 
@@ -54,6 +53,7 @@ class Ticket
     /**
      * Notes:   调用魔法函数选择指定服务提供者
      * Author:  Cucumber
+     *
      * Date:    2018/5/8
      * Time:    1:04
      * @param $method
@@ -63,6 +63,16 @@ class Ticket
     public static function __callStatic($method, $args)
     {
         $instance = self::getInstances();
+        if ($instance->async) {
+            $job = (
+                new CreateTicketJob($instance, [
+                    'method' => $method,
+                    'args' => $args,
+                ])
+            )->delay(1)
+                ->onQueue('thirdTicketPush');
+            return dispatch($job);
+        }
         return $instance->handle($method, $args);
     }
 
@@ -77,6 +87,18 @@ class Ticket
      */
     public function __call($method, $args)
     {
+        $instance = self::getInstances();
+
+        if ($instance->async) {
+            $job = (
+                new CreateTicketJob($instance, [
+                    'method' => $method,
+                    'args' => $args,
+                ])
+            )->delay(1)
+                ->onQueue('thirdTicketPush');
+            return dispatch($job);
+        }
         return $this->handle($method, $args);
     }
 
@@ -106,7 +128,7 @@ class Ticket
      * @return mixed
      */
 
-    protected function handle($method, $args)
+    public function handle($method, $args)
     {
         $providerInstance = $this->getProvidersInstance($method);
         if (!$this->getProvider()) {
@@ -168,10 +190,7 @@ class Ticket
      */
     public function create($providerInstance, $data)
     {
-        if (!$this->async) {
-            return call_user_func_array([$providerInstance, 'handle'], [$data]);
-        }
-        return Queue::pushOn('createTicket', new CreateTicketJob($providerInstance, $data));
+        return call_user_func_array([$providerInstance, 'handle'], [$data]);
     }
 
     /**
