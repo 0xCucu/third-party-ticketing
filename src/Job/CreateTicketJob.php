@@ -32,6 +32,9 @@ class CreateTicketJob implements ShouldQueue
         $data = $this->data;
         try {
             $res = $this->provider->handle($this->data['method'], $this->data['args']);  
+            if(!$res) {
+                throw new \Exception('推送酷狗票品信息: 演出【' . $this->data['args'][1] . '】 场次【' . $this->data['args'][2] . '】 失败 res:' . $res);
+            }
             \Log::info('推送酷狗票品信息: 演出【' . $this->data['args'][1] . '】 场次【' . $this->data['args'][2] . '】 res:' . $res);
            
         } catch (\Exception $e) {
