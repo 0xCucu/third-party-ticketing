@@ -34,6 +34,7 @@ class KuGouProvider extends AbstractProvider implements ProviderInterface
             "form_params" => $requestData,
         ]);
         if ($response->getStatusCode() != 200) {
+            throw new \Exception($response->getBody()->getContents());
             return false;
         }
         return $response->getBody()->getContents();
