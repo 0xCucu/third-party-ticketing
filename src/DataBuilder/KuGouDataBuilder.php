@@ -30,7 +30,7 @@ class KuGouDataBuilder extends BasicDataBuilder implements DataBuilderInterface
         }
         return array_urlencode([
             'sourceid' => $model->id,
-            'item_name' => mb_substr(html_entity_decode($performances->title), 0, 20, 'utf-8'),
+            'item_name' => mb_substr(html_entity_decode($performances->title), 0, 70, 'utf-8'),
             'cover' => imgUrl(trim($performances->main_picture_url, "/")),
             'province' => $model->province,
             'city' => $model->city,
